@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from loguru import logger
 
 from app.user.routers import router as router_users
+from app.materials import router as materials_router
 
 
 # @asynccontextmanager
@@ -73,6 +74,7 @@ def register_routers(app: FastAPI) -> None:
     # Подключение роутеров
     app.include_router(router_root, tags=["root"])
     app.include_router(router_users, prefix='/users', tags=['Users'])
+    app.include_router(materials_router, prefix='/materials')
 
 
 # Создание экземпляра приложения
