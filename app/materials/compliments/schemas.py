@@ -5,7 +5,7 @@ class CreateComplimentsSchema(BaseModel):
     text: str
 
 
-class UpdateUserSchema(CreateComplimentsSchema):
+class UpdateComplimentsSchema(CreateComplimentsSchema):
     ...
 
 
