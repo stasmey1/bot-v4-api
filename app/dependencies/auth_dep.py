@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth.dao import UsersDAO
 from app.auth.models import User
 from app.config import settings
-from app.dependencies.dao_dep import get_session_without_commit
+from app.dependencies.dao_dep import get_session
 from app.exceptions import (
     TokenNoFound, NoJwtException, TokenExpiredException, NoUserIdException, ForbiddenException, UserNotFoundException
 )
@@ -30,7 +30,7 @@ def get_refresh_token(request: Request) -> str:
 
 async def check_refresh_token(
         token: str = Depends(get_refresh_token),
-        session: AsyncSession = Depends(get_session_without_commit)
+        session: AsyncSession = Depends(get_session)
 ) -> User:
     """ Проверяем refresh_token и возвращаем пользователя."""
     try:
@@ -43,7 +43,7 @@ async def check_refresh_token(
         if not user_id:
             raise NoJwtException
 
-        user = await UsersDAO(session).find_one_or_none_by_id(data_id=int(user_id))
+        user = await UsersDAO(session).get(data_id=int(user_id))
         if not user:
             raise NoJwtException
 
@@ -54,7 +54,7 @@ async def check_refresh_token(
 
 async def get_current_user(
         token: str = Depends(get_access_token),
-        session: AsyncSession = Depends(get_session_without_commit)
+        session: AsyncSession = Depends(get_session)
 ) -> User:
     """Проверяем access_token и возвращаем пользователя."""
     try:
@@ -75,7 +75,7 @@ async def get_current_user(
     if not user_id:
         raise NoUserIdException
 
-    user = await UsersDAO(session).find_one_or_none_by_id(data_id=int(user_id))
+    user = await UsersDAO(session).get(data_id=int(user_id))
     if not user:
         raise UserNotFoundException
     return user

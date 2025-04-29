@@ -1,37 +1,46 @@
-# from typing import List
-# from fastapi import APIRouter, Response, Depends
-# from sqlalchemy.ext.asyncio import AsyncSession
-#
-# from app.auth.models import User
+from typing import List
+from fastapi import APIRouter, Response, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.user.models import Users
 # from app.auth.utils import authenticate_user, set_tokens
 # from app.dependencies.auth_dep import get_current_user, get_current_admin_user, check_refresh_token
-# from app.dependencies.dao_dep import get_session_with_commit, get_session_without_commit
-# from app.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
-# from app.auth.dao import UsersDAO
+from app.dependencies.dao_dep import get_session_commited, get_session
+from app.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
+from app.user.dao import UsersDAO
+from app.user import schemas
+
 # from app.auth.schemas import SUserRegister, SUserAuth, EmailModel, SUserAddDB, SUserInfo
-#
-# router = APIRouter()
-#
-#
-# @router.post("/register/")
-# async def register_user(user_data: SUserRegister,
-#                         session: AsyncSession = Depends(get_session_with_commit)) -> dict:
-#     # Проверка существования пользователя
-#     user_dao = UsersDAO(session)
-#
-#     existing_user = await user_dao.find_one_or_none(filters=EmailModel(email=user_data.email))
-#     if existing_user:
-#         raise UserAlreadyExistsException
-#
-#     # Подготовка данных для добавления
-#     user_data_dict = user_data.model_dump()
-#     user_data_dict.pop('confirm_password', None)
-#
-#     # Добавление пользователя
-#     await user_dao.add(values=SUserAddDB(**user_data_dict))
-#
-#     return {'message': 'Вы успешно зарегистрированы!'}
-#
+
+router = APIRouter()
+
+
+@router.get("")
+async def register_user(session: AsyncSession = Depends(get_session)) -> list:
+    res = await UsersDAO(session).get_list()
+    return [inst.to_dict() for inst in res]
+
+
+@router.get("/{id}")
+async def register_user(
+        id: int,
+        session: AsyncSession = Depends(get_session)
+):
+    res = await UsersDAO(session).get(id)
+    return res.to_dict()
+
+
+@router.post(
+    "/create",
+    response_model=schemas.UserOutSchema
+)
+async def register_user(
+        body: schemas.UserCreateSchema,
+        session: AsyncSession = Depends(get_session)
+):
+    res = await UsersDAO(session).create(body)
+    return res.to_dict()
+
 #
 # @router.post("/login/")
 # async def auth_user(

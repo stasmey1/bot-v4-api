@@ -5,15 +5,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
 
-from app.auth.router import router as router_auth
+from app.user.routers import router as router_users
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
-    """Управление жизненным циклом приложения."""
-    logger.info("Инициализация приложения...")
-    yield
-    logger.info("Завершение работы приложения...")
+# @asynccontextmanager
+# async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
+#     """Управление жизненным циклом приложения."""
+#     logger.info("Инициализация приложения...")
+#     yield
+#     logger.info("Завершение работы приложения...")
 
 
 def create_app() -> FastAPI:
@@ -24,15 +24,15 @@ def create_app() -> FastAPI:
        Сконфигурированное приложение FastAPI
    """
     app = FastAPI(
-        title="Стартовая сборка FastAPI",
-        description=(
-            "Стартовая сборка с интегрированной SQLAlchemy 2 для разработки FastAPI приложений с продвинутой "
-            "архитектурой, включающей авторизацию, аутентификацию и управление ролями пользователей.\n\n"
-            "**Автор проекта**: Яковенко Алексей\n"
-            "**Telegram**: https://t.me/PythonPathMaster"
-        ),
-        version="1.0.0",
-        lifespan=lifespan,
+        # title="Стартовая сборка FastAPI",
+        # # description=(
+        # #     "Стартовая сборка с интегрированной SQLAlchemy 2 для разработки FastAPI приложений с продвинутой "
+        # #     "архитектурой, включающей авторизацию, аутентификацию и управление ролями пользователей.\n\n"
+        # #     "**Автор проекта**: Яковенко Алексей\n"
+        # #     "**Telegram**: https://t.me/PythonPathMaster"
+        # # ),
+        # version="1.0.0",
+        # lifespan=lifespan,
     )
 
     # Настройка CORS
@@ -44,12 +44,12 @@ def create_app() -> FastAPI:
         allow_headers=["*"]
     )
 
-    # Монтирование статических файлов
-    app.mount(
-        '/static',
-        StaticFiles(directory='app/static'),
-        name='static'
-    )
+    # # Монтирование статических файлов
+    # app.mount(
+    #     '/static',
+    #     StaticFiles(directory='app/static'),
+    #     name='static'
+    # )
 
     # Регистрация роутеров
     register_routers(app)
@@ -60,9 +60,9 @@ def create_app() -> FastAPI:
 def register_routers(app: FastAPI) -> None:
     """Регистрация роутеров приложения."""
     # Корневой роутер
-    root_router = APIRouter()
+    router_root = APIRouter()
 
-    @root_router.get("/", tags=["root"])
+    @router_root.get("/", tags=["root"])
     def home_page():
         return {
             "message": "Добро пожаловать! Проект создан для сообщества 'Легкий путь в Python'.",
@@ -71,8 +71,8 @@ def register_routers(app: FastAPI) -> None:
         }
 
     # Подключение роутеров
-    app.include_router(root_router, tags=["root"])
-    app.include_router(router_auth, prefix='/auth', tags=['Auth'])
+    app.include_router(router_root, tags=["root"])
+    app.include_router(router_users, prefix='/users', tags=['Users'])
 
 
 # Создание экземпляра приложения
