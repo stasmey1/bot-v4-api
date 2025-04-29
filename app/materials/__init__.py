@@ -1,6 +1,8 @@
 from app.materials.compliments.routers import router as compliments_router
 from app.materials.motivation_picture.routers import router as motivation_picture_router
 from app.materials.category_video.routers import router as category_video_router
+from app.materials.category_materials.routers import router as category_materials_router
+
 
 from fastapi import APIRouter
 
@@ -22,4 +24,11 @@ router.include_router(
     category_video_router,
     prefix="/category_video",
     tags=["Category_video", ]
+)
+
+
+router.include_router(
+    category_materials_router,
+    prefix="/category_materials",
+    tags=["Category_materials", ]
 )
