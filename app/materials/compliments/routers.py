@@ -3,14 +3,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dependencies.dao_dep import get_session_commited, get_session
 from app.materials.compliments.dao import ComplimentsDAO as Dao
-from app.materials.compliments import schemas
+from app.materials.compliments.schemas import (
+    OutComplimentsSchema as OutSchema,
+    CreateComplimentsSchema as CreateSchema,
+    UpdateComplimentsSchema as UpdateSchema
+)
 
 router = APIRouter()
 
 
 @router.get(
     "",
-    response_model=list[schemas.OutComplimentsSchema]
+    response_model=list[OutSchema]
 )
 async def get_all(session: AsyncSession = Depends(get_session)) -> list:
     res = await Dao(session).get_list()
@@ -19,7 +23,7 @@ async def get_all(session: AsyncSession = Depends(get_session)) -> list:
 
 @router.get(
     "/{id}",
-    response_model=schemas.OutComplimentsSchema
+    response_model=OutSchema
 )
 async def get(
         id: int,
@@ -31,10 +35,10 @@ async def get(
 
 @router.post(
     "/create",
-    response_model=schemas.OutComplimentsSchema
+    response_model=OutSchema
 )
 async def create(
-        body: schemas.CreateComplimentsSchema,
+        body: CreateSchema,
         session: AsyncSession = Depends(get_session_commited)
 ):
     res = await Dao(session).create(body.model_dump())
@@ -43,7 +47,7 @@ async def create(
 
 @router.delete(
     "/delete",
-    response_model=schemas.OutComplimentsSchema
+    response_model=OutSchema
 )
 async def delete(
         id: int,

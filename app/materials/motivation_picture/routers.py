@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.dependencies.dao_dep import get_session_commited, get_session
-from app.user.dao import UsersDAO as Dao
-from app.user.schemas import (
-    OutUserSchema as OutSchema,
-    CreateUserSchema as CreateSchema,
-    UpdateUserSchema as UpdateSchema
+from app.materials.motivation_picture.dao import MotivationPictureDAO as Dao
+from app.materials.motivation_picture.schemas import (
+    OutMotivationPictureSchema as OutSchema,
+    CreateMotivationPictureSchema as CreateSchema,
+    UpdateMotivationPictureSchema as UpdateSchema
 )
 
 router = APIRouter()
