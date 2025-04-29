@@ -1,12 +1,12 @@
 from pydantic import BaseModel
 
 
-class UserCreateSchema(BaseModel):
+class CreateUserSchema(BaseModel):
     name: str
-    telegram_id: int | None = None
-    is_active: bool = True
-    is_admin: bool = False
 
 
-class UserOutSchema(UserCreateSchema):
+class OutUserSchema(CreateUserSchema):
     id: int
+    telegram_id: int | None = None
+    is_active: bool
+    is_admin: bool
